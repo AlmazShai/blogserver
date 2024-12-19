@@ -1,22 +1,46 @@
 package com.almaz.blogserver.restful.blogpost;
 
-import com.almaz.blogserver.restful.model.BlogPost;
-import com.almaz.blogserver.restful.model.BlogPostWithMetadata;
+import com.almaz.blogserver.api.PostsApi;
+import com.almaz.blogserver.model.PostModel;
+import com.almaz.blogserver.model.PostResponseModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
-public class BlogPostController {
+public class BlogPostController implements PostsApi{
 
-    @PostMapping
-    public BlogPostWithMetadata createPost() {
-        return new BlogPostWithMetadata();
+
+    @Override
+    public ResponseEntity<Void> createNewPost(PostModel postModel) {
+        return null;
     }
 
-    @GetMapping("/blogpost/{id}")
-    public BlogPostWithMetadata getPost(@PathVariable Long id) {
-        return new BlogPostWithMetadata();
+    @Override
+    public ResponseEntity<Void> deletePost(Long id) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<List<PostResponseModel>> getAllPosts() {
+        ArrayList<PostResponseModel> response = new ArrayList<PostResponseModel>();
+        response.add(new PostResponseModel());
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<PostResponseModel> getPost(Long id) {
+        PostResponseModel response = new PostResponseModel();
+        response.setId(id);
+        response.setContent("test content");
+        response.setTitle("Title");
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<Void> updatePost(Long id, PostModel postModel) {
+        return null;
     }
 }
