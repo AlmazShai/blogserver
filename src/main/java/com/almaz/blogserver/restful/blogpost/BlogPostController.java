@@ -3,14 +3,12 @@ package com.almaz.blogserver.restful.blogpost;
 import com.almaz.blogserver.api.PostsApi;
 import com.almaz.blogserver.model.PostModel;
 import com.almaz.blogserver.model.PostResponseModel;
-import com.almaz.blogserver.repository.Post;
 import com.almaz.blogserver.service.BlogService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,11 +18,10 @@ public class BlogPostController implements PostsApi{
     private BlogService service;
 
     @Override
-    public ResponseEntity<Void> createNewPost(PostModel postModel) {
+    public ResponseEntity<PostResponseModel> createNewPost(PostModel postModel) {
 
         try {
-            service.createPost(postModel);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(service.createPost(postModel));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -41,9 +38,9 @@ public class BlogPostController implements PostsApi{
     }
 
     @Override
-    public ResponseEntity<List<PostResponseModel>> getAllPosts() {
+    public ResponseEntity<List<PostResponseModel>> getAllPosts(String term) {
         try {
-            List<PostResponseModel> posts = service.getPosts();
+            List<PostResponseModel> posts = service.getPosts(term);
             return ResponseEntity.ok(posts);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
@@ -64,7 +61,7 @@ public class BlogPostController implements PostsApi{
     public ResponseEntity<Void> updatePost(Long id, PostModel postModel) {
         try {
             service.updatePost(id, postModel);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

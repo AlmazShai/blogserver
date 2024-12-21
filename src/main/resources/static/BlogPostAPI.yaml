@@ -9,17 +9,21 @@ paths:
     get:
       summary: Get all posts
       operationId: getAllPosts
+      parameters:
+        - $ref: "#/components/parameters/termParam"
+
       tags:
         - posts
       responses:
-        '200':
+        "200":
           description: List of posts
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PostResponse'
+                  $ref: "#/components/schemas/PostResponse"
+                maxItems: 100
 
     post:
       summary: Create a new post
@@ -31,26 +35,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Post'
+              $ref: "#/components/schemas/Post"
       responses:
-        '201':
-          description: Post created
+        "201":
+          description: The post was successfully created. Returns no content.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostResponse"
 
   /api/v1/posts/{id}:
     parameters:
-      - $ref: '#/components/parameters/idParam'
+      - $ref: "#/components/parameters/idParam"
     get:
       summary: Get a post by ID
       operationId: getPost
       tags:
         - posts
       responses:
-        '200':
+        "200":
           description: Post details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostResponse'
+                $ref: "#/components/schemas/PostResponse"
+        "404":
+          description: Post with given ID is not found
 
     put:
       summary: Update a post by ID
@@ -62,10 +72,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Post'
+              $ref: "#/components/schemas/Post"
       responses:
-        '200':
-          description: Post updated
+        "204":
+          description: Post updated. Return no content.
 
     delete:
       summary: Delete a post by ID
@@ -73,8 +83,10 @@ paths:
       tags:
         - posts
       responses:
-        '204':
-          description: Post deleted
+        "204":
+          description: The post was successfully deleted. No content returned.
+        "404":
+          description: Post with given ID is not found
 
 components:
   parameters:
@@ -86,26 +98,39 @@ components:
       schema:
         type: integer
         format: int64
+        minimum: 0
+    termParam:
+      name: term
+      in: query
+      description: Filter posts by a specific search term. Filter applied on title, content and category.
+      required: false
+      schema:
+        type: string
+        example: tech
+        maxLength: 50
 
   schemas:
     Post:
+      example:
+        title: "My First Blog Post"
+        content: "This is the content of my first blog post."
+        category: "Technology"
+        tags: ["Tech", "Programming"]
       type: object
       properties:
         title:
-          type: string
+          $ref: "#/components/schemas/Title"
         content:
-          type: string
+          $ref: "#/components/schemas/Content"
         category:
-          type: string
+          $ref: "#/components/schemas/Category"
         tags:
-          type: array
-          items:
-            type: string
+          $ref: "#/components/schemas/Tags"
       required:
-        - id
         - title
         - content
-
+        - category
+        - tags
 
     PostResponse:
       type: object
@@ -114,21 +139,21 @@ components:
           type: integer
           format: int64
         title:
-          type: string
+          $ref: "#/components/schemas/Title"
         content:
-          type: string
+          $ref: "#/components/schemas/Content"
         category:
-          type: string
+          $ref: "#/components/schemas/Category"
         tags:
-          type: array
-          items:
-            type: string
+          $ref: "#/components/schemas/Tags"
         createdAt:
           type: string
           format: date-time
+          maxLength: 50
         updatedAt:
           type: string
           format: date-time
+          maxLength: 50
       required:
         - id
         - title
@@ -138,5 +163,24 @@ components:
         - createdAt
         - updatedAt
 
+    Title:
+      type: string
+      minLength: 1
+      maxLength: 100
 
+    Content:
+      type: string
+      minLength: 1
+      maxLength: 1000
 
+    Category:
+      type: string
+      minLength: 1
+      maxLength: 100
+
+    Tags:
+      type: array
+      items:
+        type: string
+        maxLength: 32
+      maxItems: 100

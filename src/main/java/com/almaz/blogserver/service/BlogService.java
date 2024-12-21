@@ -4,7 +4,6 @@ import com.almaz.blogserver.model.PostModel;
 import com.almaz.blogserver.model.PostResponseModel;
 import com.almaz.blogserver.repository.Post;
 import com.almaz.blogserver.repository.PostRepository;
-import com.almaz.blogserver.service.ModelConverter;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,10 @@ public class BlogService {
     @Autowired
     PostRepository postRepository;
 
-    public void createPost(PostModel post) {
-        postRepository.save(ModelConverter.convert(post));
+    public PostResponseModel createPost(PostModel post) {
+        Post entity = ModelConverter.convert(post);
+        postRepository.save(entity);
+        return ModelConverter.convert(entity);
     }
 
     public void updatePost(Long id, PostModel postModel) {
@@ -49,9 +50,9 @@ public class BlogService {
         }
     }
 
-    public List<PostResponseModel> getPosts() {
+    public List<PostResponseModel> getPosts(String term) {
         ArrayList<PostResponseModel> response = new ArrayList<>();
-        Iterable<Post> posts = postRepository.findAll();
+        Iterable<Post> posts = term != null ? postRepository.searchByTerm((term)) : postRepository.findAll();
         for(Post post : posts) {
             response.add(ModelConverter.convert(post));
         }
@@ -59,6 +60,9 @@ public class BlogService {
     }
 
     public void deletePost(Long id) {
+        if(postRepository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException();
+        }
         postRepository.deleteById(id);
     }
 }
