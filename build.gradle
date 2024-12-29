@@ -6,11 +6,11 @@ plugins {
 }
 
 group = 'com.almaz'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(23)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -30,6 +30,17 @@ dependencies {
 	implementation 'io.swagger.core.v3:swagger-annotations:2.2.9'
 	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
 	implementation 'org.postgresql:postgresql:42.7.4'
+}
+
+jar {
+	duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+	manifest {
+		attributes 'Main-Class' : 'com.almaz.blogserver.BlogserverApplication'
+	}
+
+	from {
+		configurations.runtimeClasspath.collect {it.isDirectory() ? it : zipTree(it)}
+	}
 }
 
 tasks.named('test') {
