@@ -1,4 +1,4 @@
-package com.almaz.blogserver.repository;
+package com.almaz.blogserver.entity;
 
 import jakarta.persistence.*;
 

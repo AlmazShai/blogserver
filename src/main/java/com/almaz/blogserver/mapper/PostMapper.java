@@ -1,14 +1,14 @@
-package com.almaz.blogserver.service;
+package com.almaz.blogserver.mapper;
 
 import com.almaz.blogserver.model.PostModel;
 import com.almaz.blogserver.model.PostResponseModel;
-import com.almaz.blogserver.repository.Post;
+import com.almaz.blogserver.entity.Post;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 
-public class ModelConverter {
+public class PostMapper {
 
     static public Post convert(PostModel model) {
         return new Post(model.getTitle(), model.getContent(), model.getCategory(), model.getTags());

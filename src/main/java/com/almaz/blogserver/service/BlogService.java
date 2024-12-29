@@ -1,8 +1,9 @@
 package com.almaz.blogserver.service;
 
+import com.almaz.blogserver.mapper.PostMapper;
 import com.almaz.blogserver.model.PostModel;
 import com.almaz.blogserver.model.PostResponseModel;
-import com.almaz.blogserver.repository.Post;
+import com.almaz.blogserver.entity.Post;
 import com.almaz.blogserver.repository.PostRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -20,9 +21,9 @@ public class BlogService {
     PostRepository postRepository;
 
     public PostResponseModel createPost(PostModel post) {
-        Post entity = ModelConverter.convert(post);
+        Post entity = PostMapper.convert(post);
         postRepository.save(entity);
-        return ModelConverter.convert(entity);
+        return PostMapper.convert(entity);
     }
 
     public void updatePost(Long id, PostModel postModel) {
@@ -44,7 +45,7 @@ public class BlogService {
     public PostResponseModel getPost(Long id) {
         Optional<Post> post = postRepository.findById(id);
         if (post.isPresent()) {
-            return ModelConverter.convert(post.get());
+            return PostMapper.convert(post.get());
         } else {
             throw new EntityNotFoundException("Post with ID " + id + " not found.");
         }
@@ -54,7 +55,7 @@ public class BlogService {
         ArrayList<PostResponseModel> response = new ArrayList<>();
         Iterable<Post> posts = term != null ? postRepository.searchByTerm((term)) : postRepository.findAll();
         for(Post post : posts) {
-            response.add(ModelConverter.convert(post));
+            response.add(PostMapper.convert(post));
         }
         return response;
     }
